@@ -29,7 +29,7 @@ class Esprit < Formula
     end
   end
 
-  def post_install
+  def post_install_steps
     ohai "Esprit installed successfully! 🚀"
     ohai ""
     ohai "Run diagnostic & clean check:"
