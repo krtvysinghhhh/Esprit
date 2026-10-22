@@ -25,9 +25,18 @@ pub fn run_cleaner(opts: CleanOptions) -> Result<()> {
 
     if !opts.json {
         ui::banner();
+        #[cfg(target_os = "macos")]
+        let os_tag = "macOS / Local-First";
+        #[cfg(target_os = "linux")]
+        let os_tag = "Linux / Local-First";
+        #[cfg(target_os = "windows")]
+        let os_tag = "Windows / Local-First";
+        #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+        let os_tag = "Local-First";
+
         ui::panel_header(
             "Deep System Diagnostic & Storage Cleaner",
-            Some("macOS / Local-First"),
+            Some(os_tag),
         );
     }
 

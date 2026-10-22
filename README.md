@@ -34,21 +34,40 @@
 
 ---
 
-## 🚀 Installation
+## 🚀 Cross-Platform Installation
 
-### 1. One-Line Install (macOS & Linux)
-Install the latest pre-compiled release binary directly to your terminal:
+### 1. Homebrew (macOS & Linux)
+Install via the official Esprit Homebrew tap in one command:
+```bash
+brew install krtvysinghhhh/esprit/esprit
+```
+Or tap manually and install:
+```bash
+brew tap krtvysinghhhh/esprit
+brew install esprit
+```
+
+### 2. Linux Terminal (Ubuntu, Debian, Fedora, Arch, Alpine)
+Run the one-line terminal installer:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/scripts/install.sh | sh
 ```
 
-### 2. Homebrew (macOS & Linux)
+### 3. Windows (CMD & PowerShell)
+Run in PowerShell (as standard user, no administrator rights needed):
+```powershell
+irm https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/scripts/install.ps1 | iex
+```
+Or in Windows Command Prompt (`cmd.exe`):
+```cmd
+curl -fsSL https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/scripts/install.cmd -o install.cmd && install.cmd
+```
+Or with Scoop:
 ```bash
-brew tap krtvysinghhhh/esprit https://github.com/krtvysinghhhh/Esprit
-brew install esprit
+scoop install https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/packaging/scoop/esprit.json
 ```
 
-### 3. Pre-Built Standalone Binaries
+### 4. Pre-Built Standalone Binaries
 Download directly from [GitHub Releases](https://github.com/krtvysinghhhh/Esprit/releases):
 
 | Platform | Architecture | Binary Package |
@@ -57,20 +76,11 @@ Download directly from [GitHub Releases](https://github.com/krtvysinghhhh/Esprit
 | **macOS** | Intel (x86_64) | `esprit-x86_64-apple-darwin.tar.gz` |
 | **Linux** | x86_64 (Static musl) | `esprit-x86_64-unknown-linux-musl.tar.gz` |
 | **Linux** | ARM64 (aarch64 musl) | `esprit-aarch64-unknown-linux-musl.tar.gz` |
-| **Windows** | x86_64 | `esprit-x86_64-pc-windows-msvc.zip` |
+| **Windows** | x86_64 (MSVC) | `esprit-x86_64-pc-windows-msvc.zip` |
 
-### 4. Build From Source
-Requires standard Rust toolchain:
+### 5. Build From Source (Any Platform with Cargo)
 ```bash
-# Clone the repository
-git clone https://github.com/krtvysinghhhh/Esprit.git
-cd Esprit
-
-# Build optimized release binary
-cargo build --release -p esprit-cli
-
-# Copy binary to PATH
-cp target/release/esprit /usr/local/bin/
+cargo install --git https://github.com/krtvysinghhhh/Esprit.git esprit-cli
 ```
 
 ---

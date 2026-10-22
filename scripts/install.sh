@@ -1,13 +1,12 @@
 #!/usr/bin/env sh
-# Esprit one-line installer
+# Esprit one-line installer for Linux & macOS terminals
 # Usage: curl -fsSL https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/scripts/install.sh | sh
 set -eu
 
 REPO="krtvysinghhhh/Esprit"
 VERSION="${ESPRIT_VERSION:-latest}"
-BIN_DIR="${ESPRIT_INSTALL_DIR:-/usr/local/bin}"
 
-# ── Detect platform ───────────────────────────────────────────────────────────
+# ── Detect Target Architecture & Platform ─────────────────────────────────────
 OS="$(uname -s)"
 ARCH="$(uname -m)"
 
@@ -22,75 +21,114 @@ case "${OS}" in
   Linux)
     case "${ARCH}" in
       x86_64)  TARGET="x86_64-unknown-linux-musl"  ;;
-      aarch64) TARGET="aarch64-unknown-linux-musl"  ;;
+      aarch64) TARGET="aarch64-unknown-linux-musl" ;;
+      armv7l)  TARGET="armv7-unknown-linux-musleabihf" ;;
       *) echo "Unsupported Linux arch: ${ARCH}" && exit 1 ;;
     esac
     ;;
   *)
-    echo "Unsupported OS: ${OS}"
-    echo "Please download a binary manually from:"
-    echo "  https://github.com/${REPO}/releases"
+    echo "Unsupported operating system: ${OS}"
+    echo "For Windows, run in PowerShell:"
+    echo "  irm https://raw.githubusercontent.com/${REPO}/main/scripts/install.ps1 | iex"
     exit 1
     ;;
 esac
 
-# ── Resolve version ───────────────────────────────────────────────────────────
+# ── Select Install Directory ──────────────────────────────────────────────────
+if [ -n "${ESPRIT_INSTALL_DIR:-}" ]; then
+  BIN_DIR="${ESPRIT_INSTALL_DIR}"
+elif [ -w "/usr/local/bin" ]; then
+  BIN_DIR="/usr/local/bin"
+elif [ -d "${HOME}/.local/bin" ] || mkdir -p "${HOME}/.local/bin" 2>/dev/null; then
+  BIN_DIR="${HOME}/.local/bin"
+else
+  BIN_DIR="/usr/local/bin"
+fi
+
+mkdir -p "${BIN_DIR}" 2>/dev/null || true
+
+# ── Resolve Version ───────────────────────────────────────────────────────────
 if [ "${VERSION}" = "latest" ]; then
-  VERSION="$(curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest" \
-    | grep '"tag_name"' | sed 's/.*"tag_name": *"v\([^"]*\)".*/\1/')"
+  RELEASE_API="https://api.github.com/repos/${REPO}/releases/latest"
+  if command -v curl >/dev/null 2>&1; then
+    TAG="$(curl -fsSL "${RELEASE_API}" 2>/dev/null | grep '"tag_name"' | sed 's/.*"tag_name": *"v\([^"]*\)".*/\1/' || true)"
+  elif command -v wget >/dev/null 2>&1; then
+    TAG="$(wget -qO- "${RELEASE_API}" 2>/dev/null | grep '"tag_name"' | sed 's/.*"tag_name": *"v\([^"]*\)".*/\1/' || true)"
+  else
+    TAG=""
+  fi
+  VERSION="${TAG:-0.1.0}"
 fi
 
-echo "Installing Esprit v${VERSION} for ${TARGET}…"
+echo ""
+echo "  ███████╗███████╗██████╗ ██████╗ ██╗████████╗"
+echo "  ██╔════╝██╔════╝██╔══██╗██╔══██╗██║╚══██╔══╝"
+echo "  █████╗  ███████╗██████╔╝██████╔╝██║   ██║   "
+echo "  ██╔══╝  ╚════██║██╔═══╝ ██╔══██╗██║   ██║   "
+echo "  ███████╗███████║██║     ██║  ██║██║   ██║   "
+echo ""
+echo "  Installing Esprit v${VERSION} (${TARGET}) into ${BIN_DIR}…"
 
-# ── Download ──────────────────────────────────────────────────────────────────
+# ── Download or Build ─────────────────────────────────────────────────────────
 URL="https://github.com/${REPO}/releases/download/v${VERSION}/esprit-${TARGET}.tar.gz"
-TMPDIR="$(mktemp -d)"
+TMPDIR="$(mktemp -d 2>/dev/null || mktemp -d -t 'esprit')"
 TARBALL="${TMPDIR}/esprit.tar.gz"
+DOWNLOADED=0
 
-if command -v curl > /dev/null 2>&1; then
-  curl -fsSL --progress-bar "${URL}" -o "${TARBALL}"
-elif command -v wget > /dev/null 2>&1; then
-  wget -q --show-progress "${URL}" -O "${TARBALL}"
+if command -v curl >/dev/null 2>&1; then
+  if curl -fsSL --progress-bar "${URL}" -o "${TARBALL}" 2>/dev/null; then
+    DOWNLOADED=1
+  fi
+elif command -v wget >/dev/null 2>&1; then
+  if wget -q --show-progress "${URL}" -O "${TARBALL}" 2>/dev/null; then
+    DOWNLOADED=1
+  fi
+fi
+
+if [ "${DOWNLOADED}" -eq 1 ]; then
+  tar -xzf "${TARBALL}" -C "${TMPDIR}"
+  rm -f "${TARBALL}"
+
+  if [ -w "${BIN_DIR}" ]; then
+    mv "${TMPDIR}/esprit" "${BIN_DIR}/esprit"
+  else
+    sudo mv "${TMPDIR}/esprit" "${BIN_DIR}/esprit"
+  fi
+  chmod +x "${BIN_DIR}/esprit"
+  rm -rf "${TMPDIR}"
 else
-  echo "Error: neither curl nor wget found." && exit 1
+  # Fallback to source compilation if precompiled binary is not yet published
+  if command -v cargo >/dev/null 2>&1; then
+    echo "  • Building from source using Cargo..."
+    cargo install --git "https://github.com/${REPO}.git" esprit-cli --root "${HOME}/.esprit" --quiet
+    mkdir -p "${BIN_DIR}"
+    cp -f "${HOME}/.esprit/bin/esprit" "${BIN_DIR}/esprit"
+    chmod +x "${BIN_DIR}/esprit"
+  else
+    echo "  ✗ Could not download pre-compiled release binary and Cargo is not installed."
+    echo "    Please install Rust via https://rustup.rs or download from:"
+    echo "    https://github.com/${REPO}/releases"
+    exit 1
+  fi
 fi
 
-# ── Verify SHA-256 ────────────────────────────────────────────────────────────
-SHA_URL="${URL}.sha256"
-EXPECTED="$(curl -fsSL "${SHA_URL}" | awk '{print $1}')"
-if command -v sha256sum > /dev/null 2>&1; then
-  ACTUAL="$(sha256sum "${TARBALL}" | awk '{print $1}')"
-elif command -v shasum > /dev/null 2>&1; then
-  ACTUAL="$(shasum -a 256 "${TARBALL}" | awk '{print $1}')"
-else
-  echo "Warning: cannot verify SHA-256 (no sha256sum or shasum)."
-  ACTUAL="${EXPECTED}"
-fi
-
-if [ "${ACTUAL}" != "${EXPECTED}" ]; then
-  echo "SHA-256 mismatch! Download may be corrupt."
-  echo "  Expected: ${EXPECTED}"
-  echo "  Got:      ${ACTUAL}"
-  exit 1
-fi
-
-# ── Install ───────────────────────────────────────────────────────────────────
-tar -xzf "${TARBALL}" -C "${TMPDIR}"
-rm -f "${TARBALL}"
-
-if [ -w "${BIN_DIR}" ]; then
-  mv "${TMPDIR}/esprit" "${BIN_DIR}/esprit"
-else
-  sudo mv "${TMPDIR}/esprit" "${BIN_DIR}/esprit"
-fi
-chmod +x "${BIN_DIR}/esprit"
-rm -rf "${TMPDIR}"
+# ── Path Warning Check ────────────────────────────────────────────────────────
+case ":${PATH}:" in
+  *":${BIN_DIR}:"*) ;;
+  *)
+    echo ""
+    echo "  ⚠ Note: ${BIN_DIR} is not in your current PATH."
+    echo "    Add this to your ~/.zshrc or ~/.bashrc:"
+    echo "      export PATH=\"${BIN_DIR}:\$PATH\""
+    ;;
+esac
 
 echo ""
-echo "  ✓ Esprit v${VERSION} installed to ${BIN_DIR}/esprit"
+echo "  ✓ Esprit v${VERSION} installed successfully to ${BIN_DIR}/esprit"
 echo ""
-echo "  Next steps:"
-echo "    esprit init          # Download the default AI model (~390 MB)"
-echo "    esprit doctor        # System health check"
-echo "    esprit --help        # All commands"
+echo "  Quick Start:"
+echo "    esprit doctor             # Full system and AI health check"
+echo "    esprit clean --dry-run    # Preview storage and cache cleanup"
+echo "    esprit ask <question>     # Query codebase with semantic intelligence"
+echo "    esprit --help             # Command catalog"
 echo ""

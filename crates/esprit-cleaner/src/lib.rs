@@ -397,15 +397,33 @@ impl SystemCleaner {
             // System Caches & Trash
             (
                 CleanCategory::SystemCache,
-                "User Application Caches",
+                "macOS User Application Caches",
                 home.join("Library/Caches"),
                 "macOS User application caches and runtime temp files",
+            ),
+            (
+                CleanCategory::SystemCache,
+                "Linux User Application Caches",
+                home.join(".cache"),
+                "Linux desktop application cache directory",
+            ),
+            (
+                CleanCategory::SystemCache,
+                "Linux Desktop Thumbnail Previews",
+                home.join(".cache/thumbnails"),
+                "Freedesktop cached image and media thumbnails",
             ),
             (
                 CleanCategory::SystemTrash,
                 "macOS User Trash",
                 home.join(".Trash"),
                 "Deleted files waiting in Trash bin",
+            ),
+            (
+                CleanCategory::SystemTrash,
+                "Linux Freedesktop Trash",
+                home.join(".local/share/Trash"),
+                "Deleted desktop files stored in Freedesktop trash",
             ),
             (
                 CleanCategory::LogReports,
@@ -415,9 +433,15 @@ impl SystemCleaner {
             ),
             (
                 CleanCategory::LogReports,
-                "User Application Logs",
+                "macOS User Application Logs",
                 home.join("Library/Logs"),
                 "Application execution trace logs",
+            ),
+            (
+                CleanCategory::LogReports,
+                "Linux System Logs",
+                PathBuf::from("/var/log"),
+                "Linux system diagnostic and service execution logs",
             ),
             (
                 CleanCategory::TemporaryFiles,
@@ -427,9 +451,52 @@ impl SystemCleaner {
             ),
             (
                 CleanCategory::TemporaryFiles,
+                "Linux Variable Temp",
+                PathBuf::from("/var/tmp"),
+                "Reboot-persistent variable temporary directory",
+            ),
+            (
+                CleanCategory::TemporaryFiles,
                 "System Temp Directory",
                 PathBuf::from("/tmp"),
                 "System temporary process buffers",
+            ),
+            // Windows Specific Targets
+            (
+                CleanCategory::TemporaryFiles,
+                "Windows User Temp Directory",
+                home.join("AppData/Local/Temp"),
+                "Windows per-user temporary scratch directory",
+            ),
+            (
+                CleanCategory::LogReports,
+                "Windows Crash Dumps",
+                home.join("AppData/Local/CrashDumps"),
+                "Windows Error Reporting (WER) minidump crash files",
+            ),
+            (
+                CleanCategory::BrowserCache,
+                "Windows Chrome Cache",
+                home.join("AppData/Local/Google/Chrome/User Data/Default/Cache"),
+                "Windows Google Chrome web cache and cached media",
+            ),
+            (
+                CleanCategory::BrowserCache,
+                "Windows Edge Cache",
+                home.join("AppData/Local/Microsoft/Edge/User Data/Default/Cache"),
+                "Windows Microsoft Edge web assets and cache files",
+            ),
+            (
+                CleanCategory::DeveloperCache,
+                "Windows npm Cache",
+                home.join("AppData/Local/npm-cache"),
+                "Windows Node.js npm package tarball cache",
+            ),
+            (
+                CleanCategory::DeveloperCache,
+                "Windows Pip Cache",
+                home.join("AppData/Local/pip/Cache"),
+                "Windows Python wheel and package build cache",
             ),
         ];
 
@@ -471,6 +538,13 @@ impl SystemCleaner {
             PathBuf::from("/System/Applications"),
             PathBuf::from("/System/Applications/Utilities"),
             home.join("Applications"),
+            // Linux Desktop applications
+            PathBuf::from("/usr/share/applications"),
+            home.join(".local/share/applications"),
+            // Windows Program Files & App folders
+            PathBuf::from("C:\\Program Files"),
+            PathBuf::from("C:\\Program Files (x86)"),
+            home.join("AppData/Local/Programs"),
         ];
 
         for app_dir in app_dirs {
@@ -482,6 +556,15 @@ impl SystemCleaner {
                             let normalized = stem.to_lowercase().replace(' ', "");
                             installed_apps.insert(normalized);
                         }
+                    } else if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("desktop") {
+                        if let Some(stem) = path.file_stem().and_then(|s| s.to_str()) {
+                            let normalized = stem.to_lowercase().replace([' ', '-'], "");
+                            installed_apps.insert(normalized);
+                        }
+                    } else if path.is_dir() {
+                        let stem = entry.file_name().to_string_lossy().to_string();
+                        let normalized = stem.to_lowercase().replace(' ', "");
+                        installed_apps.insert(normalized);
                     }
                 }
             }
@@ -661,6 +744,10 @@ impl SystemCleaner {
             home.join("Library/LaunchAgents"),
             PathBuf::from("/Library/LaunchAgents"),
             PathBuf::from("/Library/LaunchDaemons"),
+            home.join(".config/autostart"),
+            PathBuf::from("/etc/cron.d"),
+            PathBuf::from("/etc/cron.daily"),
+            home.join("AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup"),
         ];
 
         for dir in inspect_dirs {
@@ -691,12 +778,15 @@ impl SystemCleaner {
             }
         }
 
-        // Check Shell RC Files
+        // Check Shell & Terminal Startup RC Files
         let rc_files = vec![
             home.join(".zshrc"),
             home.join(".bashrc"),
             home.join(".bash_profile"),
             home.join(".profile"),
+            home.join(".bash_login"),
+            home.join("Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1"),
+            home.join("Documents/PowerShell/Microsoft.PowerShell_profile.ps1"),
         ];
 
         for rc in rc_files {
@@ -798,6 +888,9 @@ impl SystemCleaner {
             || p_str == "/etc"
             || p_str == "/var"
             || p_str == "/Library"
+            || p_str == "C:\\"
+            || p_str.starts_with("C:\\Windows")
+            || p_str.starts_with("C:\\Program Files")
         {
             return false;
         }

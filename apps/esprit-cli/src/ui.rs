@@ -23,6 +23,15 @@ pub fn logo() -> String {
 
 pub fn banner() {
     println!("{}", logo());
+    #[cfg(target_os = "macos")]
+    let platform_label = " APPLE SILICON METAL ";
+    #[cfg(target_os = "linux")]
+    let platform_label = " LINUX SIMD/AVX2 ";
+    #[cfg(target_os = "windows")]
+    let platform_label = " WINDOWS WIN32/AVX2 ";
+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
+    let platform_label = " CPU ACCELERATED ";
+
     println!(
         "  {} {} {} {}",
         format!(" v{} ", env!("CARGO_PKG_VERSION"))
@@ -30,7 +39,7 @@ pub fn banner() {
             .on_cyan()
             .bold(),
         " AIR-GAPPED ".black().on_green().bold(),
-        " APPLE SILICON METAL ".black().on_magenta().bold(),
+        platform_label.black().on_magenta().bold(),
         " LOCAL-FIRST ".black().on_yellow().bold(),
     );
     println!("  {}\n", "─".repeat(58).dimmed());

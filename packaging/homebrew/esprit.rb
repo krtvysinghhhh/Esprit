@@ -1,45 +1,40 @@
 class Esprit < Formula
-  desc "AI workspace and operating layer — fully offline, no Ollama required"
+  desc "Air-gapped, high-performance developer workspace operating layer in pure Rust"
   homepage "https://github.com/krtvysinghhhh/Esprit"
   version "0.1.0"
   license "MIT"
+  head "https://github.com/krtvysinghhhh/Esprit.git", branch: "main"
 
-  # Bottles are pre-compiled by CI — no Rust, CMake, or C++ needed.
+  depends_on "rust" => :build
+
   on_macos do
     on_arm do
       url "https://github.com/krtvysinghhhh/Esprit/releases/download/v0.1.0/esprit-aarch64-apple-darwin.tar.gz"
-      sha256 "PLACEHOLDER_AARCH64_MACOS"
+      sha256 "c1d8f35263646f971f6e350bf352c652226f6ea1eaf5a17c4eff4da04c00815b"
     end
     on_intel do
-      url "https://github.com/krtvysinghhhh/Esprit/releases/download/v0.1.0/esprit-x86_64-apple-darwin.tar.gz"
-      sha256 "PLACEHOLDER_X86_64_MACOS"
+      url "https://github.com/krtvysinghhhh/Esprit/archive/refs/tags/v0.1.0.tar.gz"
     end
   end
 
   on_linux do
-    on_arm do
-      url "https://github.com/krtvysinghhhh/Esprit/releases/download/v0.1.0/esprit-aarch64-unknown-linux-musl.tar.gz"
-      sha256 "PLACEHOLDER_AARCH64_LINUX"
-    end
-    on_intel do
-      url "https://github.com/krtvysinghhhh/Esprit/releases/download/v0.1.0/esprit-x86_64-unknown-linux-musl.tar.gz"
-      sha256 "PLACEHOLDER_X86_64_LINUX"
-    end
+    url "https://github.com/krtvysinghhhh/Esprit/archive/refs/tags/v0.1.0.tar.gz"
   end
 
   def install
-    bin.install "esprit"
+    if File.exist?("esprit")
+      bin.install "esprit"
+    else
+      system "cargo", "install", *std_cargo_args(path: "apps/esprit-cli")
+    end
   end
 
   def post_install
-    ohai "Esprit installed! 🚀"
+    ohai "Esprit installed successfully! 🚀"
     ohai ""
-    ohai "Download the default AI model (one-time, ~390 MB):"
-    ohai "  esprit init"
-    ohai ""
-    ohai "Then use it:"
-    ohai "  esprit ask \"what does this project do?\""
+    ohai "Run diagnostic & clean check:"
     ohai "  esprit doctor"
+    ohai "  esprit clean --dry-run"
     ohai "  esprit --help"
   end
 

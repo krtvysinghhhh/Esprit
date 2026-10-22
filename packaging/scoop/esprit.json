@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "description": "Air-gapped, high-performance developer workspace operating layer in pure Rust",
+  "homepage": "https://github.com/krtvysinghhhh/Esprit",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/krtvysinghhhh/Esprit/releases/download/v0.1.0/esprit-x86_64-pc-windows-msvc.zip",
+      "bin": "esprit.exe"
+    }
+  },
+  "checkver": "github",
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/krtvysinghhhh/Esprit/releases/download/v$version/esprit-x86_64-pc-windows-msvc.zip"
+      }
+    }
+  }
+}
