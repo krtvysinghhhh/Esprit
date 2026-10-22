@@ -39,17 +39,17 @@
 ### 1. One-Line Install (macOS & Linux)
 Install the latest pre-compiled release binary directly to your terminal:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/krtvyasingh/Esprit/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/krtvysinghhhh/Esprit/main/scripts/install.sh | sh
 ```
 
 ### 2. Homebrew (macOS & Linux)
 ```bash
-brew tap krtvyasingh/esprit https://github.com/krtvyasingh/Esprit
+brew tap krtvysinghhhh/esprit https://github.com/krtvysinghhhh/Esprit
 brew install esprit
 ```
 
 ### 3. Pre-Built Standalone Binaries
-Download directly from [GitHub Releases](https://github.com/krtvyasingh/Esprit/releases):
+Download directly from [GitHub Releases](https://github.com/krtvysinghhhh/Esprit/releases):
 
 | Platform | Architecture | Binary Package |
 | :--- | :--- | :--- |
@@ -63,7 +63,7 @@ Download directly from [GitHub Releases](https://github.com/krtvyasingh/Esprit/r
 Requires standard Rust toolchain:
 ```bash
 # Clone the repository
-git clone https://github.com/krtvyasingh/Esprit.git
+git clone https://github.com/krtvysinghhhh/Esprit.git
 cd Esprit
 
 # Build optimized release binary
@@ -283,4 +283,4 @@ cargo clippy --workspace --all-targets -- -D warnings
 ## 📄 License
 
 Esprit is open source software released under the [MIT License](LICENSE).
-Author: **Kartavya Singh** ([@krtvyasingh](https://github.com/krtvyasingh))
+Author: **Kartavya Singh** ([@krtvysinghhhh](https://github.com/krtvysinghhhh))
