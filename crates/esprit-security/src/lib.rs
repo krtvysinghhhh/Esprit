@@ -88,7 +88,7 @@ impl SecretScanner {
                 r"\b(sk-[a-zA-Z0-9]{20,64}|sk-ant-[a-zA-Z0-9-_]{20,80})\b",
             ),
             (
-                "Google Cloud / Gemini API Key",
+                "Google Cloud Platform (GCP) API Key",
                 "CRITICAL",
                 r"\b(AIza[0-9A-Za-z-_]{35})\b",
             ),

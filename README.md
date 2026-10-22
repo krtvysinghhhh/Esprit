@@ -8,7 +8,7 @@
 ```
 
 # ESPRIT
-### The Autonomous AI Workspace & Operating Layer for Developers
+### The Autonomous Workspace & Operating Layer for Developers
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
@@ -20,15 +20,17 @@
 
 ## 🌟 What is Esprit?
 
-**Esprit** is a high-performance, **zero-dependency AI workspace and operating layer** engineered in Rust. It turns any codebase or directory tree into an interactive, AI-indexed knowledge base with instant sub-millisecond keyword lookup, semantic vector retrieval, conversational memory, file organization, and autonomous agent workflows.
+**Esprit** is a high-performance, **zero-dependency developer operating layer and workspace intelligence platform** engineered in Rust. It transforms any codebase or filesystem directory into an interactive, indexed knowledge base with sub-millisecond keyword lookup, semantic vector retrieval, deep AST blast-radius impact analysis, autonomous agent swarms, a native Language Server Protocol (LSP) server, and an intelligent deep system cleaner.
 
-### Why Esprit is Different:
-* **Zero Runtime Dependencies**: No Ollama daemon required, no Python, no Docker, no external services. Everything is embedded into a single static native binary.
-* **Hardware-Accelerated Inference**: Uses native `llama.cpp` Rust bindings with automatic Apple Silicon Metal acceleration on macOS and optimized multi-threaded AVX2/NEON CPU execution on Linux and Windows.
+### Why Esprit is Different
+* **Zero External Dependencies**: No external daemons required, no Python runtime, no Docker requirement. Everything is embedded into a single static native binary.
+* **Hardware-Accelerated Inference**: Native `llama.cpp` Rust bindings with automatic Apple Silicon Metal (MPS) acceleration on macOS and optimized multi-threaded AVX2/NEON CPU execution on Linux and Windows.
 * **Hybrid Search Engine**: Combines BM25 full-text indexing ([Tantivy](https://github.com/quickwit-oss/tantivy)) with semantic vector embeddings and cosine nearest-neighbour search.
-* **Incremental & Git-Aware**: Automatically honors `.gitignore`, skips unchanged files using file `mtime` cache, and watches directories in real-time with debounced notify channels.
-* **Robust Local Storage**: SQLite in WAL (Write-Ahead Logging) mode ensures fast, zero-lock concurrent reads/writes across watcher threads and CLI queries.
-* **Polished Terminal UX**: Fast interactive spinners, progress bars with ETA, syntax-colored output, and structured JSON outputs for automation.
+* **AST Code Intelligence**: Structural symbol indexing across Rust, TypeScript, JavaScript, Python, and Go with cross-file blast radius calculation and downstream test suite triage.
+* **Deep System Cleaner**: System cache sweeper, uninstalled app leftover detector, and malicious persistence shield with live unified memory telemetry.
+* **Native Language Server Protocol (LSP)**: JSON-RPC 2.0 stdio server providing completion, hover cards, code actions, and diagnostic quick-fixes directly to VS Code, Cursor, Zed, and Neovim.
+* **Air-Gap & Enterprise Security**: Shannon entropy secret scanner, tamper-evident Merkle audit logging, and hard `--offline` isolation mode.
+* **Robust Local Storage**: SQLite in WAL (Write-Ahead Logging) mode ensures zero-lock concurrent reads/writes across watcher threads and CLI queries.
 
 ---
 
@@ -67,140 +69,169 @@ cd Esprit
 # Build optimized release binary
 cargo build --release -p esprit-cli
 
-# Symlink or copy to PATH
+# Copy binary to PATH
 cp target/release/esprit /usr/local/bin/
 ```
 
 ---
 
-## ⚡ Quickstart (First Run)
+## ⚡ Quickstart
 
-### Step 1: Initialize & Download Base Model
-Download the compact, high-efficiency base model (~390 MB) into the local cache:
 ```bash
+# 1. Initialize and download base model (~390 MB)
 esprit init
-```
-*(Optional: include `--with-embeddings` to also download the Nomic Embed model for semantic vector search).*
 
-### Step 2: Check System Health
-Verify system environment, developer tools, and storage metrics:
-```bash
+# 2. Check system health and environment metrics
 esprit doctor
-```
 
-### Step 3: Index Your Project
-Index all source files in your current repository (respects `.gitignore`):
-```bash
+# 3. Index your workspace
 esprit index .
 esprit rebuild
-```
 
-### Step 4: Ask Questions with AI
-Query your codebase using natural language:
-```bash
+# 4. Ask questions grounded in your code
 esprit ask "How is authentication handled in this project?" --sources
+
+# 5. Run deep system cleaner diagnostic
+esprit clean --scan
 ```
 
 ---
 
-## 📖 Command Line Reference
+## 📖 Command Reference
 
 ```
 Usage: esprit [OPTIONS] <COMMAND>
-
-Commands:
-  init          Download default models and initialize Esprit
-  doctor        Check system health, developer tools, and index metrics
-  ask           Ask the local AI questions grounded in your project
-  search        Search indexed code using full-text BM25 or regex
-  index         Index a directory tree into the database
-  rebuild       Rebuild full-text Tantivy search index
-  db            List all indexed files and size breakdowns
-  index-stats   Display total indexed files, storage size, and languages
-  watch         Real-time debounced filesystem watcher & live indexer
-  model         Manage local GGUF models (list, pull, remove)
-  agent         Run specialized agents (chat, code, search)
-  workflow      Execute developer workflows (explain, review, search)
-  duplicates    Find duplicate files by SHA-256 content hashing
-  organize      Sort files into extension-based folders (with --dry-run)
-  stats         Scan folder metrics, file counts, and extension distribution
-  memory-stats  Inspect conversation memory statistics
-  memory-clear  Erase conversation history
-  version       Print version banner and build details
 ```
 
-### Examples
+### System Health, Clean & Security
+| Command | Description |
+| :--- | :--- |
+| `esprit clean` | Deep system cleaner: sweeps developer/browser/OS caches, removes ghost app remnants, inspects malware persistence |
+| `esprit doctor` | Run full system diagnostic (OS, CPU cores, unified memory, toolchain, database integrity) |
+| `esprit scan-secrets` | Entropy-based secret and credential leak detector (AWS, GitHub, GCP, Stripe, SSH keys) |
+| `esprit update` | Instant self-updater synchronized with upstream GitHub repository |
+| `esprit dashboard` | Interactive full-screen terminal TUI dashboard for live metrics |
 
-#### 1. Codebase RAG & Question Answering
+### Code Intelligence & Analysis
+| Command | Description |
+| :--- | :--- |
+| `esprit blast-radius <fn>` | Predict cross-file AST downstream impact and list affected unit test suites |
+| `esprit complexity [path]` | Evaluate Cognitive and Cyclomatic complexity scores and highlight nesting hotspots |
+| `esprit dead-code [path]` | Identify orphaned structs, unused functions, and dead symbols |
+| `esprit drift <file>` | Detect if documentation comments contradict function implementation signatures |
+| `esprit trace <function>` | Trace function call hierarchy and external dependencies |
+| `esprit graph` | Output architectural component dependency graph as Mermaid JS |
+| `esprit test-gaps` | Find source files missing test suites |
+
+### Editor Integration & LSP
+| Command | Description |
+| :--- | :--- |
+| `esprit lsp` | Native Language Server Protocol (LSP) stdio JSON-RPC server for VS Code, Cursor, Zed, and Neovim |
+
+### Search & Vector Memory (RAG)
+| Command | Description |
+| :--- | :--- |
+| `esprit ask "<prompt>"` | Query codebase with grounded retrieval-augmented generation and attribution |
+| `esprit hyde "<query>"` | Hypothetical Document Embeddings (HyDE) expansion search |
+| `esprit find "<query>"` | Semantic vector search via dense code embeddings |
+| `esprit search "<pattern>"` | High-speed lexical search using Tantivy BM25 or regex |
+| `esprit index [path]` | Index directory tree into search database |
+| `esprit rebuild` | Rebuild full-text Tantivy search index |
+| `esprit watch [path]` | Real-time debounced filesystem watcher & live incremental indexer |
+| `esprit brain-export` | Export vector knowledge brain to portable `.esprit_brain.json` package |
+
+### Autonomous Swarms & Workflows
+| Command | Description |
+| :--- | :--- |
+| `esprit tdd "<goal>"` | Autonomous TDD loop: synthesizes unit test and writes passing implementation |
+| `esprit red-team [path]` | AppSec red-team vulnerability auditor for injection vectors and memory safety |
+| `esprit triager "<error>"` | SRE production incident triager that analyzes stack traces and generates unified patches |
+| `esprit debate "<topic>"` | Multi-agent architectural debate (Architect vs Security vs Performance) |
+| `esprit os "<prompt>"` | macOS Omni-Agent natural language system assistant with Human-in-the-Loop sandbox |
+| `esprit review` | Offline code reviewer inspecting git staged diffs |
+| `esprit annotate <file>` | Synthesize missing docstrings and inline documentation |
+| `esprit plan "<goal>"` | Formulate step-by-step structural refactoring plans |
+
+### DevOps, CI/CD & Engineering
+| Command | Description |
+| :--- | :--- |
+| `esprit ci-gen [lang]` | Generate production multi-OS GitHub Actions workflow (`rust`, `node`, `go`, `py`) |
+| `esprit docker-gen [name]` | Generate multi-stage distroless Dockerfile |
+| `esprit cost-estimate [svc]` | Real-time vCPU and memory cloud infrastructure cost estimator |
+| `esprit onboarding` | Generate comprehensive `ONBOARDING.md` developer guide |
+| `esprit style-enforce [path]` | Audit and enforce production code conventions and safety |
+
+### Filesystem & Model Management
+| Command | Description |
+| :--- | :--- |
+| `esprit duplicates [path]` | Detect duplicate files via cryptographic SHA-256 hashing |
+| `esprit organize <dir>` | Group files into extension subdirectories (with `--dry-run`) |
+| `esprit stats <dir>` | File extension distribution, line counts, and directory metrics |
+| `esprit model list` | List available GGUF models and installation status |
+| `esprit model pull <id>` | Download and verify model weights |
+| `esprit model remove <id>` | Delete installed model to reclaim storage |
+| `esprit memory-stats` | Inspect conversation history entries |
+| `esprit memory-clear` | Reset conversation memory cache |
+| `esprit memory-compress` | Compress historical chats into dense knowledge summaries |
+
+---
+
+## 🧹 Feature Showcase: Deep System Cleaner
+
+The `esprit clean` subsystem provides comprehensive disk optimization and security verification:
+
 ```bash
-# Ask with source file attribution
-esprit ask "Where is the database connection pool initialized?" --sources
+# 1. Live diagnostic scan with memory pressure gauge
+esprit clean --scan
 
-# Ask code agent for refactoring ideas
-esprit agent code "How can I reduce clone allocations in the indexer module?"
+# 2. Dry-run simulation (zero disk writes)
+esprit clean --all --dry-run
 
-# Explain a complex module
-esprit workflow explain "crates/esprit-index/src/indexer.rs"
-```
+# 3. Clean developer tool caches (Xcode, Cargo, npm, pip, Gradle, Go, Homebrew)
+esprit clean --cache
 
-#### 2. Model Management
-```bash
-# List available & installed models
-esprit model list
+# 4. Remove uninstalled application leftover support directories
+esprit clean --leftovers
 
-# Pull a higher capability model (e.g. Qwen3 1.7B)
-esprit model pull qwen3:1.7b
+# 5. Full clean with automated confirmation
+esprit clean --all --yes
 
-# Switch default active model
-esprit config --set-model qwen3:1.7b
-```
-
-#### 3. Real-Time Indexing & Watching
-```bash
-# Keep index continually synchronized as you edit code
-esprit watch .
-```
-
-#### 4. Filesystem Utilities
-```bash
-# Analyze file extension breakdown
-esprit stats .
-
-# Preview grouping files into extension directories
-esprit organize ./downloads --dry-run
-
-# Detect duplicate files via cryptographic hashing
-esprit duplicates ./assets
+# 6. JSON output for CI or monitoring pipelines
+esprit clean --json
 ```
 
 ---
 
 ## 🏗️ Architecture & Crates
 
-Esprit is organized as a clean, modular Cargo workspace:
+Esprit is organized as a modular, high-cohesion Cargo workspace:
 
 ```
 Esprit/
 ├── apps/
-│   └── esprit-cli/          # High-performance CLI interface & commands
+│   └── esprit-cli/          # Command-line interface, terminal UI, and LSP server
 ├── crates/
+│   ├── esprit-cleaner/      # Deep cache sweeper, ghost app remover & malware shield
+│   ├── esprit-codeintel/    # Polyglot AST parser, blast radius & complexity metrics
+│   ├── esprit-security/     # Entropy secret scanner, Merkle audit log & air-gap guard
 │   ├── esprit-ai/           # Embedded llama.cpp inference engine (Metal/CPU)
-│   ├── esprit-models/       # GGUF model registry, downloader, and resume logic
-│   ├── esprit-embeddings/   # Native vector embeddings extraction
+│   ├── esprit-models/       # GGUF model registry, downloader, and checksum verifier
+│   ├── esprit-embeddings/   # Native vector embeddings generator
 │   ├── esprit-index/        # Tantivy full-text indexer + SQLite file registry
-│   ├── esprit-search/       # BM25 & regex search engine
-│   ├── esprit-rag/          # Hybrid retrieval-augmented generation engine
+│   ├── esprit-search/       # BM25 lexical & regex search engine
+│   ├── esprit-rag/          # Hybrid retrieval-augmented generation & HyDE engine
 │   ├── esprit-memory/       # Multi-session conversational memory (SQLite WAL)
-│   ├── esprit-vectors/      # Vector database & cosine similarity search
-│   ├── esprit-platform/     # Cross-platform diagnostics & debounced watcher
-│   ├── esprit-filesystem/   # SHA-256 hashing, duplicate scanner, organizer
+│   ├── esprit-vectors/      # Embedded vector database & cosine similarity search
+│   ├── esprit-platform/     # Hardware telemetry, thermals & debounced file watcher
+│   ├── esprit-filesystem/   # SHA-256 deduplication and directory organizer
 │   ├── esprit-config/       # TOML configuration loader and settings manager
 │   ├── esprit-agents/       # Autonomous specialized agent roles
 │   ├── esprit-workflows/    # Higher-level code review & search workflows
-│   ├── esprit-plugins/      # Extensible plugin registration & dispatch trait
-│   ├── esprit-telemetry/    # Structured tracing subscriber & log subscriber
-│   ├── esprit-storage/      # Safe ProjectDirs path resolver & WAL connections
+│   ├── esprit-plugins/      # WebAssembly (WASM) plugin sandbox isolated by Wasmtime
+│   ├── esprit-telemetry/    # Structured tracing subscriber & log manager
+│   ├── esprit-storage/      # Safe OS path resolver & SQLite connections
 │   └── esprit-core/         # Core error types, versioning, and banner
+├── docs/                    # Architectural specs, cleaner guides, and security policies
 ├── packaging/
 │   └── homebrew/            # Homebrew formula for macOS / Linux
 ├── scripts/
@@ -212,15 +243,14 @@ Esprit/
 
 ## ⚙️ Configuration
 
-Esprit stores configuration at standard OS locations:
+Configuration is located at standard OS paths:
 * **macOS**: `~/Library/Application Support/dev.esprit.esprit/config.toml`
 * **Linux**: `~/.config/esprit/config.toml`
 * **Windows**: `%APPDATA%\esprit\esprit\config.toml`
 
-### Configuration File Format (`config.toml`)
+### Configuration File (`config.toml`)
 ```toml
 ai_model = "qwen3:0.6b"
-ollama_url = "http://127.0.0.1:11434"
 threads = 8
 color = true
 context_chars_per_file = 3500
@@ -228,34 +258,9 @@ max_context_files = 8
 ```
 
 ### Environment Overrides
-Environment variables take precedence over config files:
 * `ESPRIT_MODEL`: Select active model (`qwen3:0.6b`, `qwen3:1.7b`, etc.)
+* `ESPRIT_OFFLINE`: Force air-gapped zero-network isolation (`1` or `true`)
 * `RUST_LOG`: Set logging verbosity (`debug`, `info`, `warn`, `error`)
-
----
-
-## 🔮 Roadmap: Top 20 Advanced Features
-
-1. **🧠 Code Memory Graph**: Petgraph-based AST call-graph indexing for structural code traversal.
-2. **⚡ System Daemon Service**: Native background service (`launchd`/`systemd`) for continuous instant re-embedding.
-3. **🔀 Branching Chat Sessions**: Tree-structured SQLite conversation branching and session management.
-4. **📊 Ratatui Terminal Dashboard**: Rich TUI overview of code health, test status, and indexing metrics.
-5. **🌊 Streaming Token Rendering**: Real-time token streaming with inline syntax highlighting.
-6. **🔌 WASM Plugin Sandbox**: Safe community plugins running under `wasmtime` runtime isolation.
-7. **🎯 Semantic Git Diff**: Natural language summaries of commits and pull request diffs.
-8. **🕵️ Offline Code Reviewer**: In-terminal security, performance, and style inspections.
-9. **📦 Dependency Intelligence**: AI-powered dependency graph analysis and vulnerability auditing.
-10. **✏️ Refactoring Planner**: Step-by-step structural refactoring guides grounded in code.
-11. **🧪 Test Gap Finder**: Identification of untested public functions and edge-case branches.
-12. **🔐 Secret & Key Scanner**: Local high-entropy credential and token detector.
-13. **💬 Inline Code Annotator**: Automated docstring and parameter documentation generator.
-14. **🌐 Multi-Model Router**: Intelligent task-based routing across fast and deep models.
-15. **📝 Developer Diary**: Git-linked conceptual session notes with semantic search.
-16. **🔭 Cross-Project Search**: Multi-workspace unified index and search federation.
-17. **🏎️ Benchmark Impact Analysis**: Predictive test and benchmark triage on staged diffs.
-18. **🗺️ Visual Architecture Map**: Automated Mermaid and ASCII architecture diagram generation.
-19. **🤝 Split-Pane Pair Programmer**: Live reactive assistant watching git staging status.
-20. **📤 Project Intelligence Exporter**: Markdown onboarding summary report generation.
 
 ---
 
@@ -270,7 +275,7 @@ cargo test --workspace
 cargo fmt --all -- --check
 
 # Check lints
-cargo clippy --workspace -- -D warnings
+cargo clippy --workspace --all-targets -- -D warnings
 ```
 
 ---
@@ -278,3 +283,4 @@ cargo clippy --workspace -- -D warnings
 ## 📄 License
 
 Esprit is open source software released under the [MIT License](LICENSE).
+Author: **Kartavya Singh** ([@krtvyasingh](https://github.com/krtvyasingh))

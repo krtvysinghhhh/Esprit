@@ -1,3 +1,3 @@
+# esprit-models
 
-
-<!-- updated for esprit-models docs -->
+Local model management, registry, downloader, and checksum verification for Esprit.

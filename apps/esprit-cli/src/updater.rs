@@ -53,8 +53,8 @@ pub fn find_repo_quick() -> Result<PathBuf> {
     if let Ok(home) = std::env::var("HOME") {
         let home_path = PathBuf::from(home);
         let candidates = [
-            home_path.join(".gemini/antigravity/scratch/Esprit"),
             home_path.join("Projects/Esprit"),
+            home_path.join("Development/Esprit"),
             home_path.join("Esprit"),
             home_path.join(".esprit/source"),
         ];
